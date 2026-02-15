@@ -1,0 +1,29 @@
+{
+	debug
+	skip_install_trust
+	log {
+		output stdout
+		format console
+	}
+    order php_server before file_server
+    auto_https off
+    admin off
+}
+:80 {
+    root * /app/public
+
+    encode zstd br gzip
+
+	@phpRoute {
+		not file {path}
+	}
+	rewrite @phpRoute /index.php
+
+	@frontController path /index.php
+	php @frontController
+
+	file_server {
+		hide *.php
+	}
+	
+}

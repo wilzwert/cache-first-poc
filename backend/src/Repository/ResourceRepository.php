@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Repository;
+
+/**
+ * @author Wilhelm Zwertvaegher
+ */
+class ResourceRepository
+{
+    private array $resources;
+
+    public function __construct()
+    {
+        $this->resources = [
+            ['id' => 123, 'name' => 'Archived resource 123', 'date' => '2025-12-26'],
+            ['id' => 124, 'name' => 'Archived resource 124', 'date' => '2025-12-15'],
+            ['id' => 125, 'name' => 'Archived resource 125', 'date' => '2025-12-08'],
+            ['id' => 126, 'name' => 'Archived resource 126', 'date' => '2025-12-01'],
+            ['id' => 123456, 'name' => 'Current resource', 'date' => new \DateTimeImmutable()->format('Y-m-d')],
+        ];
+    }
+
+    public function findAll(): array
+    {
+        return $this->resources;
+    }
+
+    public function findCurrent(): ?array
+    {
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'))->format('Y-m-d');
+        return array_find($this->resources, fn ($arr) => $arr['date'] === $now);
+    }
+
+
+    public function findById(int $id): ?array
+    {
+        return array_find($this->resources, fn ($arr) => $arr['id'] === $id);
+    }
+
+}

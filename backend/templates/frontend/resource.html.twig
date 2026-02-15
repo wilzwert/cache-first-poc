@@ -1,0 +1,8 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+<a href="/">Home</a>
+
+{% include 'frontend/_resource.html.twig' with {'resource': resource, 'stats_url': stats_url} %}
+
+{% endblock %}

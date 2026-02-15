@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+{% include 'frontend/_resource.html.twig' with {'resource': resource, 'stats_url': stats_url} %}
+
+<div id="archive">
+    <ul>
+    {% for resource in archive %}
+        <li><a href="{{ path('resource', {id: resource['id']}) }}">{{ resource['name'] }}</a></li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}

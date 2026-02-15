@@ -1,0 +1,13 @@
+<h2>Resource (pre rendered)</h2>
+<div id="resource">
+    {# pre rendered #}
+    {{ resource|json_encode|raw }}
+</div>
+
+<h2>Stats (fetched by stimulus controller)</h2>
+<div id="stats" {{ stimulus_controller('stats', { statsUrl: stats_url }) }}>
+    <div {{ stimulus_target('stats', 'stats') }}>
+        {# Dynamic fetch #}
+        Loading {{ stats_url }}...
+    </div>
+</div>

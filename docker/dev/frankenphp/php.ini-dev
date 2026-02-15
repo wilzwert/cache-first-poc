@@ -1,0 +1,18 @@
+memory_limit = 512M
+upload_max_filesize = 20M
+post_max_size = 20M
+max_execution_time = 60
+date.timezone = Europe/Paris
+
+; OPcache
+opcache.enable = 1
+opcache.memory_consumption = 256
+opcache.interned_strings_buffer = 16
+opcache.max_accelerated_files = 20000
+opcache.validate_timestamps = 1
+opcache.revalidate_freq = 0
+
+; Errors
+display_errors = 0
+error_reporting = 0
+
