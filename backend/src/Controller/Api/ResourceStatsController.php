@@ -30,12 +30,14 @@ class ResourceStatsController extends AbstractController
         // the more ancient the update is, the more chances there are that it will rarely be updated
         // now - last update => max age
         // e.g. if stats have been updated 10 minutes ago, then they expire in 10 minutes
+        // we keep a minimum expiration as 2 minutes for "busy days"
         // of course this is suboptimal, but for this POC it will do
         $response->setPublic();
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         $updatedAt = new \DateTimeImmutable($stats['updated'], new \DateTimeZone('UTC'));
         $diff = $now->getTimestamp() - $updatedAt->getTimestamp();
-        $response->setMaxAge($diff);
+        $minDiff = 120;
+        $response->setMaxAge($diff < $minDiff ? $minDiff : $diff);
         $response->setSharedMaxAge($diff); // for shared caches (e.g. Varnish, CDN)
         $response->headers->set('ETag', 'resource-stats-'.$id.'-'.$updatedAt->getTimestamp());
         $response->setVary(['Accept-Encoding']); // gzip
