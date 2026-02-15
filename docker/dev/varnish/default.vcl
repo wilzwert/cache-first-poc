@@ -7,25 +7,50 @@ backend symfony {
 }
 
 sub vcl_recv {
-    # Permet de passer tout en cacheable
+    unset req.http.x-cache;
+
     if (req.method == "PURGE") {
         return (purge);
     }
+
+    if (req.method != "GET" && req.method != "HEAD") {
+        return (pass);
+    }
+
+    # mandatory with ETag
+    unset req.http.If-None-Match;
+    unset req.http.If-Modified-Since;
+
+    return (hash);
+}
+
+sub vcl_hit {
+	set req.http.x-cache = "hit";
+}
+
+sub vcl_miss {
+	set req.http.x-cache = "miss";
+}
+
+sub vcl_pass {
+	set req.http.x-cache = "pass";
 }
 
 sub vcl_backend_response {
-    # Si le backend ne renvoie pas TTL, par défaut 1 seconde
+    # default ttl if not send
     if (beresp.ttl <= 0s) {
         set beresp.ttl = 1s;
     }
 }
 
 sub vcl_deliver {
-    # debug header in dev
-    set resp.http.X-Dev-Varnish = "yes";
-    if (obj.hits > 0) {
-        set resp.http.X-Cache = "HIT";
+    if (obj.uncacheable) {
+        set req.http.x-cache = req.http.x-cache + " uncacheable" ;
     } else {
-        set resp.http.X-Cache = "MISS";
+        set req.http.x-cache = req.http.x-cache + " cached" ;
     }
+    # to show the information in the response
+    set resp.http.x-cache = req.http.x-cache;
+    set resp.http.x-varnish-ttl = obj.ttl;
+    set resp.http.x-varnish-age = obj.age;
 }
